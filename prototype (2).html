@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased bg-gray-50 text-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Lock Settings - Filament Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Filament-style Focus Ring */
+        .fi-input:focus-within {
+            border-color: #d97706; /* Amber 600 */
+            box-shadow: 0 0 0 1px #d97706;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+    <!-- Mock Sidebar -->
+    <aside class="w-full md:w-72 bg-white border-r border-gray-200 flex-shrink-0 hidden md:block">
+        <div class="p-6 flex items-center space-x-3">
+            <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+            <span class="text-xl font-bold tracking-tight">Admin Panel</span>
+        </div>
+        <nav class="px-4 space-y-1 mt-4">
+            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100">Dashboard</a>
+            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100">Users</a>
+            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg">Geo Lock Rules</a>
+            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100">Settings</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+        <!-- Mock Topbar -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+            <h1 class="text-2xl font-bold tracking-tight">Geo Lock Rules</h1>
+            <button class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                Save changes
+            </button>
+        </header>
+
+        <div class="p-8 max-w-5xl mx-auto space-y-6">
+            
+            <div class="mb-2">
+                <h2 class="text-lg font-medium">Configure Access Rules</h2>
+                <p class="text-sm text-gray-500">Define which roles can access the dashboard from specific geographical regions.</p>
+            </div>
+
+            <!-- Repeater Container -->
+            <div class="space-y-4">
+                
+                <!-- Rule Item 1 -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all">
+                    <!-- Item Header -->
+                    <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                            <h3 class="text-sm font-medium">Rule #1</h3>
+                        </div>
+                        <button class="text-gray-400 hover:text-red-500 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Item Body (Grid Layout) -->
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Apply to Roles -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Apply to Roles <span class="text-red-500">*</span></label>
+                            <div class="fi-input flex flex-wrap gap-2 items-center min-h-[42px] px-3 py-1.5 border border-gray-300 rounded-lg bg-white transition-shadow cursor-text">
+                                <!-- Chip -->
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    Editor
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    Moderator
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <input type="text" class="flex-1 outline-none min-w-[50px] text-sm" placeholder="">
+                            </div>
+                            <p class="text-xs text-gray-500">Which user roles should this rule affect?</p>
+                        </div>
+
+                        <!-- Rule Type -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Rule Type <span class="text-red-500">*</span></label>
+                            <select class="w-full h-[42px] px-3 border border-gray-300 rounded-lg outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600 text-sm bg-white shadow-sm appearance-none">
+                                <option selected>Allow Only These Locations (Whitelist)</option>
+                                <option>Block These Locations (Blacklist)</option>
+                            </select>
+                        </div>
+
+                        <!-- Countries -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Countries <span class="text-red-500">*</span></label>
+                            <div class="fi-input flex flex-wrap gap-2 items-center min-h-[42px] px-3 py-1.5 border border-gray-300 rounded-lg bg-white transition-shadow cursor-text shadow-sm">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    Jamaica (JM)
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    United States (US)
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <input type="text" class="flex-1 outline-none min-w-[50px] text-sm" placeholder="">
+                            </div>
+                        </div>
+
+                        <!-- Regions -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Specific Regions / States</label>
+                            <div class="fi-input flex flex-wrap gap-2 items-center min-h-[42px] px-3 py-1.5 border border-gray-300 rounded-lg bg-white transition-shadow cursor-text shadow-sm">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    Kingston
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md">
+                                    Florida
+                                    <button class="hover:text-gray-900">&times;</button>
+                                </span>
+                                <input type="text" class="flex-1 outline-none min-w-[50px] text-sm" placeholder="Leave empty for whole country">
+                            </div>
+                        </div>
+
+                        <!-- Rule Active Toggle -->
+                        <div class="md:col-span-2 pt-2 border-t border-gray-100 mt-2">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" class="sr-only" checked>
+                                    <div class="block bg-amber-500 w-10 h-6 rounded-full transition-colors"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform translate-x-4"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Rule Active</span>
+                            </label>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- Add Action Button -->
+                <button class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 font-medium text-sm hover:border-amber-500 hover:text-amber-600 transition-colors flex justify-center items-center gap-2 bg-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add New Rule
+                </button>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
