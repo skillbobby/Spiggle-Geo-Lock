@@ -1,0 +1,87 @@
+{
+    "name": "geolock/filament-geo-lock",
+    "description": "Rule-based geographic access control (geo-locking) for Filament admin panels, powered by torann/geoip.",
+    "keywords": [
+        "geolock",
+        "filament",
+        "geoip",
+        "security",
+        "laravel",
+        "access-control"
+    ],
+    "homepage": "https://github.com/geolock/filament-geo-lock",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "GeoLock Contributors",
+            "homepage": "https://github.com/geolock/filament-geo-lock/graphs/contributors"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^4.0|^5.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "spatie/laravel-package-tools": "^1.16",
+        "torann/geoip": "^3.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/framework": "^13.0",
+        "laravel/pint": "^1.18",
+        "livewire/livewire": "^4.0",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-arch": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0",
+        "pestphp/pest-plugin-livewire": "^5.0",
+        "spatie/laravel-permission": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "GeoLock\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GeoLock\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "test:coverage": "pest --coverage",
+        "lint": "pint",
+        "lint:check": "pint --test",
+        "analyse": "phpstan analyse",
+        "check": [
+            "@lint:check",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GeoLock\\GeoLockServiceProvider"
+            ],
+            "aliases": {
+                "GeoLock": "GeoLock\\Facades\\GeoLock"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
