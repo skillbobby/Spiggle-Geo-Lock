@@ -14,7 +14,6 @@ use GeoLock\Filament\Widgets\GeoLockStatsOverview;
 use GeoLock\Filament\Widgets\RecentGeoLockAttempts;
 use GeoLock\Services\BypassInspector;
 use GeoLock\Support\MiddlewareRegistry;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
  * Registers the geo-lock middleware, rules UI and widgets on a panel.

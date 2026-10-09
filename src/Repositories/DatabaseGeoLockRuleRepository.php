@@ -7,12 +7,12 @@ namespace GeoLock\Repositories;
 use GeoLock\Contracts\GeoLockRuleRepository;
 use GeoLock\Enums\RuleType;
 use GeoLock\Models\GeoLockRule;
+use GeoLock\Support\RegionData;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use GeoLock\Support\RegionData;
 
 /**
  * The database backed rule repository, with an optional cache layer.
@@ -264,7 +264,7 @@ class DatabaseGeoLockRuleRepository implements GeoLockRuleRepository
 
     protected function cacheKey(bool $activeOnly): string
     {
-        return ((string) config('geo-lock.rules.cache.key', 'geo-lock:rules')) . ($activeOnly ? ':active' : ':all');
+        return ((string) config('geo-lock.rules.cache.key', 'geo-lock:rules')).($activeOnly ? ':active' : ':all');
     }
 
     protected function cache(): CacheRepository

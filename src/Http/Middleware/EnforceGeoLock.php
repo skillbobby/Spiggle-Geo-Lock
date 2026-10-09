@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace GeoLock\Http\Middleware;
 
 use Closure;
+use Filament\Facades\Filament;
 use GeoLock\Data\GeoLocation;
 use GeoLock\Data\GeoLockDecision;
 use GeoLock\Enums\GeoLockOutcome;
 use GeoLock\Services\GeoLockManager;
 use GeoLock\Support\PanelScope;
-use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

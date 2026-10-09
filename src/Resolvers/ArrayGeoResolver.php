@@ -25,7 +25,7 @@ final class ArrayGeoResolver implements GeoResolver
         protected string $name = 'array',
     ) {}
 
-    public function resolve(string $ip): ?GeoLocation
+    public function resolve(string $ip): GeoLocation
     {
         $location = $this->locations[$ip] ?? $this->locations['*'] ?? null;
 

@@ -137,7 +137,7 @@ final class RegionData
             return strtoupper((string) $code);
         }
 
-        return "{$name} (" . self::countryOf($code) . ')';
+        return "{$name} (".self::countryOf($code).')';
     }
 
     /**
@@ -225,7 +225,7 @@ final class RegionData
                 $code,
                 Str::contains($code, '-') ? $code : "{$country}-{$code}",
                 Str::after($code, '-'),
-                "{$country}-" . Str::after($code, '-'),
+                "{$country}-".Str::after($code, '-'),
             ]) as $candidate) {
                 if (self::exists($candidate)) {
                     return $candidate;
@@ -265,7 +265,7 @@ final class RegionData
         $results = [];
 
         foreach (self::forCountries($countries) as $code => $name) {
-            $haystack = Str::of($name . ' ' . $code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+            $haystack = Str::of($name.' '.$code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
 
             if ($needle === '' || str_contains($haystack, $needle)) {
                 $results[$code] = self::label($code) ?? $name;
@@ -301,7 +301,7 @@ final class RegionData
 
     public static function path(): string
     {
-        return self::$path ??= Str::finish(dirname(__DIR__, 2), '/') . 'resources/data/regions.json';
+        return self::$path ??= Str::finish(dirname(__DIR__, 2), '/').'resources/data/regions.json';
     }
 
     public static function useFile(?string $path): void
@@ -343,4 +343,3 @@ final class RegionData
             ->value();
     }
 }
-

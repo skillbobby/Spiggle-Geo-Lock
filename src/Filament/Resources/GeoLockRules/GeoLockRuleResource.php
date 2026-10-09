@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeoLock\Filament\Resources\GeoLockRules;
 
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -20,7 +21,7 @@ class GeoLockRuleResource extends Resource
 {
     protected static ?string $model = GeoLockRule::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-globe-alt';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -35,7 +36,7 @@ class GeoLockRuleResource extends Resource
     }
 
     /**
-     * @return array<string, \Filament\Resources\Pages\PageRegistration>
+     * @return array<string, PageRegistration>
      */
     public static function getPages(): array
     {
@@ -58,7 +59,7 @@ class GeoLockRuleResource extends Resource
         return filled($group) ? (string) $group : null;
     }
 
-    public static function getNavigationIcon(): string | \BackedEnum | null
+    public static function getNavigationIcon(): string|\BackedEnum|null
     {
         return config('geo-lock.ui.navigation_icon', static::$navigationIcon);
     }

@@ -14,6 +14,7 @@ use GeoLock\Support\CountryData;
 use GeoLock\Support\PanelScope;
 use GeoLock\Support\RegionData;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Support\Facades\Schema as SchemaFacade;
 use Throwable;
 
@@ -35,12 +36,12 @@ class DoctorCommand extends Command
 
         $rulesTable = (string) config('geo-lock.rules.table');
         $rulesExist = $this->tableExists($rulesTable);
-        $rows[] = $this->row("Rules table ({$rulesTable})", $rulesExist, $rulesExist ? GeoLockRule::query()->count() . ' rows' : 'missing - run php artisan migrate');
+        $rows[] = $this->row("Rules table ({$rulesTable})", $rulesExist, $rulesExist ? GeoLockRule::query()->count().' rows' : 'missing - run php artisan migrate');
 
         $attemptsTable = (string) config('geo-lock.audit.table');
         $auditEnabled = (bool) config('geo-lock.audit.enabled', true);
         $attemptsExist = $this->tableExists($attemptsTable);
-        $rows[] = $this->row("Audit table ({$attemptsTable})", ! $auditEnabled || $attemptsExist, $auditEnabled ? ($attemptsExist ? GeoLockAttempt::query()->count() . ' rows' : 'missing - run php artisan migrate') : 'audit disabled');
+        $rows[] = $this->row("Audit table ({$attemptsTable})", ! $auditEnabled || $attemptsExist, $auditEnabled ? ($attemptsExist ? GeoLockAttempt::query()->count().' rows' : 'missing - run php artisan migrate') : 'audit disabled');
 
         $resolver = $manager->resolver();
         $rows[] = $this->row('Resolver driver', true, $resolver->name());
@@ -70,7 +71,7 @@ class DoctorCommand extends Command
         $cacheDetail = (string) $cacheStore;
 
         try {
-            $store = app(\Illuminate\Contracts\Cache\Factory::class)->store(config('geo-lock.resolver.cache.store'));
+            $store = app(Factory::class)->store(config('geo-lock.resolver.cache.store'));
             $store->put('geo-lock:doctor', 'ok', 5);
             $cacheOk = $store->get('geo-lock:doctor') === 'ok';
             $store->forget('geo-lock:doctor');
@@ -79,11 +80,11 @@ class DoctorCommand extends Command
             $cacheDetail = $exception->getMessage();
         }
 
-        $rows[] = $this->row('Cache store', $cacheOk, $cacheDetail . (config('geo-lock.resolver.cache.enabled') ? ' (locations cached)' : ' (location cache disabled)'));
+        $rows[] = $this->row('Cache store', $cacheOk, $cacheDetail.(config('geo-lock.resolver.cache.enabled') ? ' (locations cached)' : ' (location cache disabled)'));
 
         $roleDirectory = $manager->roleDirectory();
         $roles = $roleDirectory->availableRoles();
-        $rows[] = $this->row('Role provider', true, $roleDirectory->name() . ' - ' . count($roles) . ' role(s) available');
+        $rows[] = $this->row('Role provider', true, $roleDirectory->name().' - '.count($roles).' role(s) available');
 
         $rows[] = $this->row('Unresolvable IPs', true, UnresolvableIpBehavior::fromMixed(config('geo-lock.access.unresolvable'))->getLabel());
         $rows[] = $this->row('Resolver failures', true, ResolverFailureBehavior::fromMixed(config('geo-lock.access.on_resolver_failure'))->getLabel());
@@ -109,12 +110,12 @@ class DoctorCommand extends Command
             'Emergency bypass',
             $hasBypass,
             $hasBypass
-                ? 'roles: ' . (implode(', ', $bypassRoles) ?: '-') . ' | users: ' . (count($bypassUsers) ?: 0) . ' | ability: ' . (config('geo-lock.bypass.ability') ?: '-')
+                ? 'roles: '.(implode(', ', $bypassRoles) ?: '-').' | users: '.(count($bypassUsers) ?: 0).' | ability: '.(config('geo-lock.bypass.ability') ?: '-')
                 : 'no bypass configured - a super admin could be locked out',
             warning: ! $hasBypass,
         );
 
-        $rows[] = $this->row('GeoIP dataset', CountryData::exists('US') && RegionData::exists('US-FL'), CountryData::count() . ' countries, ' . RegionData::count() . ' subdivisions');
+        $rows[] = $this->row('GeoIP dataset', CountryData::exists('US') && RegionData::exists('US-FL'), CountryData::count().' countries, '.RegionData::count().' subdivisions');
         $rows[] = $this->row('torann/geoip service', true, (string) (config('geoip.service') ?: 'auto-detected'));
 
         $this->newLine();
@@ -132,7 +133,7 @@ class DoctorCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->components->warn($problems . ' check(s) need attention.');
+        $this->components->warn($problems.' check(s) need attention.');
 
         return self::FAILURE;
     }

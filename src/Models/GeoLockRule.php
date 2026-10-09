@@ -6,13 +6,15 @@ namespace GeoLock\Models;
 
 use GeoLock\Contracts\GeoLockRuleRepository;
 use GeoLock\Data\GeoLocation;
+use GeoLock\Database\Factories\GeoLockRuleFactory;
 use GeoLock\Enums\RuleType;
 use GeoLock\Support\CountryData;
 use GeoLock\Support\RegionData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -35,11 +37,11 @@ class GeoLockRule extends Model
     protected $guarded = [];
 
     /**
-     * @return \GeoLock\Database\Factories\GeoLockRuleFactory
+     * @return GeoLockRuleFactory
      */
-    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    protected static function newFactory(): Factory
     {
-        return \GeoLock\Database\Factories\GeoLockRuleFactory::new();
+        return GeoLockRuleFactory::new();
     }
 
     /**
@@ -110,7 +112,7 @@ class GeoLockRule extends Model
     }
 
     /**
-     * @return HasMany<GeoLockAttempt, self>
+     * @return HasMany<GeoLockAttempt, $this>
      */
     public function attempts(): HasMany
     {
@@ -216,12 +218,12 @@ class GeoLockRule extends Model
 
         if ($regions !== []) {
             return collect($regions)->take(3)->map(fn (string $code): string => RegionData::label($code))->implode(', ')
-                . (count($regions) > 3 ? ' +' . (count($regions) - 3) : '');
+                .(count($regions) > 3 ? ' +'.(count($regions) - 3) : '');
         }
 
         $countries = $this->countries ?? [];
 
         return collect($countries)->take(3)->map(fn (string $code): string => CountryData::label($code))->implode(', ')
-            . (count($countries) > 3 ? ' +' . (count($countries) - 3) : '');
+            .(count($countries) > 3 ? ' +'.(count($countries) - 3) : '');
     }
 }

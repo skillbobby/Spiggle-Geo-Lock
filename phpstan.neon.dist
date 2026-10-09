@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+    excludePaths:
+        analyse:
+            - src/Filament/Widgets/GeoLockAttemptsChart.php
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # spatie/laravel-permission is an optional dependency (dev only).
+        - '#Class Spatie\\Permission\\Contracts\\HasRoles not found.#'
+        - '#Call to method getRoleNames\(\) on an unknown class Spatie\\Permission\\Contracts\\HasRoles.#'

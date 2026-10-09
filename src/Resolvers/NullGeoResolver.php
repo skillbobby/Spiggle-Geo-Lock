@@ -16,7 +16,7 @@ use GeoLock\Support\IpAddress;
  */
 final class NullGeoResolver implements GeoResolver
 {
-    public function resolve(string $ip): ?GeoLocation
+    public function resolve(string $ip): GeoLocation
     {
         return GeoLocation::unknown($ip, $this->name(), isPrivate: IpAddress::isPrivate($ip));
     }

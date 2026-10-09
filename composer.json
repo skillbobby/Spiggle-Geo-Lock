@@ -9,13 +9,13 @@
         "laravel",
         "access-control"
     ],
-    "homepage": "https://github.com/geolock/filament-geo-lock",
+    "homepage": "https://github.com/skillbobby/Spiggle-Geo-Lock",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
             "name": "GeoLock Contributors",
-            "homepage": "https://github.com/geolock/filament-geo-lock/graphs/contributors"
+            "homepage": "https://github.com/skillbobby/Spiggle-Geo-Lock/graphs/contributors"
         }
     ],
     "require": {
@@ -84,5 +84,9 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "support": {
+        "issues": "https://github.com/skillbobby/Spiggle-Geo-Lock/issues",
+        "source": "https://github.com/skillbobby/Spiggle-Geo-Lock"
+    }
 }

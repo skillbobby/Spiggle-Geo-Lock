@@ -88,7 +88,7 @@ final class CountryData
 
         $name = self::name($code);
 
-        return $name === null ? strtoupper($code) : "{$name} (" . strtoupper($code) . ')';
+        return $name === null ? strtoupper($code) : "{$name} (".strtoupper($code).')';
     }
 
     public static function alpha3(?string $code): ?string
@@ -205,7 +205,7 @@ final class CountryData
         $results = [];
 
         foreach (self::records() as $code => $record) {
-            $haystack = Str::of($record['name'] . ' ' . $code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+            $haystack = Str::of($record['name'].' '.$code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
 
             if ($needle === '' || str_contains($haystack, $needle)) {
                 $results[$code] = self::label($code) ?? $record['name'];
@@ -241,7 +241,7 @@ final class CountryData
 
     public static function path(): string
     {
-        return self::$path ??= Str::finish(dirname(__DIR__, 2), '/') . 'resources/data/countries.json';
+        return self::$path ??= Str::finish(dirname(__DIR__, 2), '/').'resources/data/countries.json';
     }
 
     public static function useFile(?string $path): void

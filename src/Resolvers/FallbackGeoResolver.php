@@ -49,10 +49,10 @@ final class FallbackGeoResolver implements GeoResolver
 
     public function name(): string
     {
-        return 'fallback(' . implode(',', array_map(
+        return 'fallback('.implode(',', array_map(
             static fn (GeoResolver $resolver): string => $resolver->name(),
             $this->resolvers,
-        )) . ')';
+        )).')';
     }
 
     /**

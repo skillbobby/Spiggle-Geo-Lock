@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace GeoLock\Services;
 
+use Closure;
 use GeoLock\Contracts\RoleDirectory;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Closure;
 use Illuminate\Support\Arr;
 
 /**
@@ -41,7 +41,7 @@ class BypassInspector
         }
 
         if (in_array(app()->environment(), $this->list('environments'), strict: true)) {
-            return 'environment:' . app()->environment();
+            return 'environment:'.app()->environment();
         }
 
         if ($ip !== null && in_array($ip, $this->list('ips'), strict: true)) {
@@ -70,7 +70,7 @@ class BypassInspector
             $matching = array_intersect($this->roles->rolesFor($user), $bypassRoles);
 
             if ($matching !== []) {
-                return 'role:' . implode(',', $matching);
+                return 'role:'.implode(',', $matching);
             }
         }
 
@@ -78,7 +78,7 @@ class BypassInspector
             $result = $callback($user, $ip);
 
             if ($result === true) {
-                return 'callback:' . $index;
+                return 'callback:'.$index;
             }
 
             if (is_string($result) && $result !== '') {
@@ -89,7 +89,7 @@ class BypassInspector
         $ability = config('geo-lock.bypass.ability');
 
         if (is_string($ability) && filled($ability) && $this->gate->forUser($user)->allows($ability)) {
-            return 'ability:' . $ability;
+            return 'ability:'.$ability;
         }
 
         return null;
@@ -144,7 +144,7 @@ class BypassInspector
      */
     protected function list(string $key): array
     {
-        $values = Arr::wrap(config('geo-lock.bypass.' . $key, []));
+        $values = Arr::wrap(config('geo-lock.bypass.'.$key, []));
 
         return array_values(array_filter(array_map(
             static fn (mixed $value): string => is_scalar($value) ? (string) $value : '',

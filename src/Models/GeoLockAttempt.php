@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace GeoLock\Models;
 
 use GeoLock\Data\GeoLockDecision;
+use GeoLock\Database\Factories\GeoLockAttemptFactory;
 use GeoLock\Enums\GeoLockOutcome;
 use GeoLock\Support\CountryData;
 use GeoLock\Support\RegionData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,11 +42,11 @@ class GeoLockAttempt extends Model
     protected $guarded = [];
 
     /**
-     * @return \GeoLock\Database\Factories\GeoLockAttemptFactory
+     * @return GeoLockAttemptFactory
      */
-    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    protected static function newFactory(): Factory
     {
-        return \GeoLock\Database\Factories\GeoLockAttemptFactory::new();
+        return GeoLockAttemptFactory::new();
     }
 
     /**
@@ -66,15 +68,18 @@ class GeoLockAttempt extends Model
     }
 
     /**
-     * @return BelongsTo<GeoLockRule, self>
+     * @return BelongsTo<GeoLockRule, $this>
      */
     public function rule(): BelongsTo
     {
-        return $this->belongsTo(config('geo-lock.rules.model', GeoLockRule::class), 'rule_id');
+        /** @var class-string<GeoLockRule> $model */
+        $model = config('geo-lock.rules.model', GeoLockRule::class);
+
+        return $this->belongsTo($model, 'rule_id');
     }
 
     /**
-     * @return MorphTo<Model, self>
+     * @return MorphTo<Model, $this>
      */
     public function user(): MorphTo
     {

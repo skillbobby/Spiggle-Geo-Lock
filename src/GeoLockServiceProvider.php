@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeoLock;
 
+use Filament\Panel;
 use GeoLock\Contracts\GeoLockRuleRepository;
 use GeoLock\Contracts\GeoResolver;
 use GeoLock\Contracts\RoleDirectory;
@@ -20,14 +21,11 @@ use GeoLock\Services\GeoLockManager;
 use GeoLock\Services\RuleEvaluator;
 use GeoLock\Support\MiddlewareRegistry;
 use GeoLock\Support\Roles\RoleDirectoryFactory;
-use Filament\Panel;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Throwable;
 
 class GeoLockServiceProvider extends PackageServiceProvider
 {
@@ -144,7 +142,7 @@ class GeoLockServiceProvider extends PackageServiceProvider
 
     protected function resolveDriver(string $driver): GeoResolver
     {
-        $class = config('geo-lock.resolver.drivers.' . $driver, $driver);
+        $class = config('geo-lock.resolver.drivers.'.$driver, $driver);
 
         if (! is_string($class) || ! class_exists($class)) {
             return new NullGeoResolver;

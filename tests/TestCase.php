@@ -6,6 +6,7 @@ namespace GeoLock\Tests;
 
 use Filament\Facades\Filament;
 use GeoLock\GeoLockServiceProvider;
+use GeoLock\Support\MiddlewareRegistry;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -23,6 +24,7 @@ abstract class TestCase extends Orchestra
      * Livewire, spatie/laravel-permission, ...).
      */
     protected $enablesPackageDiscoveries = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +32,11 @@ abstract class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             static fn (string $modelName): string => 'GeoLock\\Database\\Factories\\' . class_basename($modelName) . 'Factory',
         );
+
+        // `MiddlewareRegistry` memoizes the panels it guarded in a static
+        // property, which would otherwise leak across the fresh application of
+        // every test and stop the middleware from being registered again.
+        MiddlewareRegistry::flush();
 
         Filament::setCurrentPanel(Filament::getPanel('admin'));
     }

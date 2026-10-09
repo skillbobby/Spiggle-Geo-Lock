@@ -9,6 +9,7 @@ use GeoLock\Services\GeoLockManager;
 use GeoLock\Support\CountryData;
 use GeoLock\Support\RegionData;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class CheckCommand extends Command
 {
@@ -94,7 +95,7 @@ class CheckCommand extends Command
         return $decision->denied() ? self::FAILURE : self::SUCCESS;
     }
 
-    protected function resolveUser(): ?\Illuminate\Contracts\Auth\Authenticatable
+    protected function resolveUser(): ?Authenticatable
     {
         $id = $this->option('user');
 
@@ -112,7 +113,7 @@ class CheckCommand extends Command
 
         $user = $model::query()->find($id);
 
-        if (! $user instanceof \Illuminate\Contracts\Auth\Authenticatable) {
+        if (! $user instanceof Authenticatable) {
             $this->components->warn("User [{$id}] was not found.");
 
             return null;

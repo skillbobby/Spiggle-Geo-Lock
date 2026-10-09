@@ -73,7 +73,7 @@ final class CacheGeoResolver implements GeoResolver
 
     private function key(string $ip): string
     {
-        return $this->prefix . ':' . md5($ip);
+        return $this->prefix.':'.md5($ip);
     }
 
     private function cache(): CacheRepository

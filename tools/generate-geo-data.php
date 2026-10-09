@@ -57,7 +57,6 @@ declare(strict_types=1);
  *
  * Exit status: 0 on success, 1 when a validation check fails, 2 on usage error.
  */
-
 const COUNTRIES_URL = 'https://raw.githubusercontent.com/mledoze/countries/master/countries.json';
 const SUBDIVISIONS_URL = 'https://salsa.debian.org/iso-codes-team/iso-codes/-/raw/main/data/iso_3166-2.json';
 const CROSSCHECK_URL = 'https://raw.githubusercontent.com/ipregistry/iso3166/main/subdivisions.csv';
@@ -122,14 +121,14 @@ function httpGet(string $url): string
 /**
  * Return the source file contents, downloading it first when needed.
  *
- * @param string|null $sourceDir Directory with pre-downloaded files, or null to download.
+ * @param  string|null  $sourceDir  Directory with pre-downloaded files, or null to download.
  */
 function readSource(string $filename, string $url, ?string $sourceDir): string
 {
     if ($sourceDir !== null) {
-        $path = $sourceDir . '/' . $filename;
+        $path = $sourceDir.'/'.$filename;
 
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             throw new RuntimeException(
                 "Missing source file {$path}. Download it from {$url} or omit --source-dir."
             );
@@ -276,21 +275,21 @@ function validate(array $countries, array $regions): array
     }
 
     foreach ($countries as $cc => $country) {
-        if (!preg_match('/^[A-Z]{2}$/', (string) $cc)) {
+        if (! preg_match('/^[A-Z]{2}$/', (string) $cc)) {
             $errors[] = "countries.json: invalid alpha-2 key \"{$cc}\"";
         }
 
-        if (!is_string($country['name']) || $country['name'] === '') {
+        if (! is_string($country['name']) || $country['name'] === '') {
             $errors[] = "countries.json: {$cc} has an empty name";
         } elseif (preg_match('/[<>]/', $country['name']) === 1) {
             $errors[] = "countries.json: {$cc} name contains HTML";
         }
 
-        if (!preg_match('/^[A-Z]{3}$/', $country['alpha3'])) {
+        if (! preg_match('/^[A-Z]{3}$/', $country['alpha3'])) {
             $errors[] = "countries.json: {$cc} has an invalid alpha-3 code";
         }
 
-        if (!in_array($country['continent'], CONTINENTS, true)) {
+        if (! in_array($country['continent'], CONTINENTS, true)) {
             $errors[] = "countries.json: {$cc} has an invalid continent";
         }
     }
@@ -300,7 +299,7 @@ function validate(array $countries, array $regions): array
     }
 
     foreach ($regions as $cc => $subdivisions) {
-        if (!isset($countries[$cc])) {
+        if (! isset($countries[$cc])) {
             $errors[] = "regions.json: outer key {$cc} is not present in countries.json";
         }
 
@@ -318,11 +317,11 @@ function validate(array $countries, array $regions): array
         }
 
         foreach ($subdivisions as $code => $name) {
-            if (!str_starts_with((string) $code, $cc . '-')) {
+            if (! str_starts_with((string) $code, $cc.'-')) {
                 $errors[] = "regions.json: {$code} does not start with {$cc}-";
             }
 
-            if (!is_string($name) || $name === '') {
+            if (! is_string($name) || $name === '') {
                 $errors[] = "regions.json: {$code} has an empty name";
             } elseif (preg_match('/[<>]/', $name) === 1) {
                 $errors[] = "regions.json: {$code} name contains HTML";
@@ -335,7 +334,7 @@ function validate(array $countries, array $regions): array
         $errors[] = 'spot check failed: US must have >= 50 subdivisions and US-FL = "Florida"';
     }
 
-    if (!isset($regions['JM']['JM-01'], $regions['JM']['JM-02'])) {
+    if (! isset($regions['JM']['JM-01'], $regions['JM']['JM-02'])) {
         $errors[] = 'spot check failed: JM must contain JM-01 and JM-02';
     }
 
@@ -351,7 +350,7 @@ function validate(array $countries, array $regions): array
 
     foreach ($expected as $cc => $checks) {
         foreach ($checks as $code => $name) {
-            if (!isset($regions[$cc][$code])) {
+            if (! isset($regions[$cc][$code])) {
                 $errors[] = "spot check failed: {$code} is missing";
 
                 continue;
@@ -377,14 +376,14 @@ function encodeJson(array $data): string
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
     if ($json === false) {
-        throw new RuntimeException('json_encode() failed: ' . json_last_error_msg());
+        throw new RuntimeException('json_encode() failed: '.json_last_error_msg());
     }
 
-    return $json . "\n";
+    return $json."\n";
 }
 
 /**
- * @param list<string> $argv
+ * @param  list<string>  $argv
  */
 function main(array $argv): int
 {
@@ -405,19 +404,19 @@ function main(array $argv): int
     }
 
     $root = dirname(__DIR__);
-    $outputDir = $root . '/resources/data';
+    $outputDir = $root.'/resources/data';
 
     $countries = buildCountries(readSource(COUNTRIES_FILE, COUNTRIES_URL, $sourceDir));
     $regions = buildRegions(readSource(SUBDIVISIONS_FILE, SUBDIVISIONS_URL, $sourceDir));
 
     $crossCheck = null;
-    $crossCheckPath = $sourceDir !== null ? $sourceDir . '/' . CROSSCHECK_FILE : null;
+    $crossCheckPath = $sourceDir !== null ? $sourceDir.'/'.CROSSCHECK_FILE : null;
     if ($crossCheckPath !== null && is_file($crossCheckPath)) {
         $crossCheck = crossCheckRegions($regions, (string) file_get_contents($crossCheckPath));
     }
 
-    $countriesPath = $outputDir . '/countries.json';
-    $regionsPath = $outputDir . '/regions.json';
+    $countriesPath = $outputDir.'/countries.json';
+    $regionsPath = $outputDir.'/regions.json';
     $countriesJson = encodeJson($countries);
     $regionsJson = encodeJson($regions);
 
@@ -450,7 +449,7 @@ function main(array $argv): int
     fwrite(STDOUT, sprintf("  %s: %d bytes\n", $regionsPath, strlen($regionsJson)));
 
     if ($crossCheck !== null) {
-        fwrite(STDOUT, $crossCheck . "\n");
+        fwrite(STDOUT, $crossCheck."\n");
     }
 
     if ($errors !== []) {
@@ -462,7 +461,7 @@ function main(array $argv): int
         return 1;
     }
 
-    if (!is_dir($outputDir) && !mkdir($outputDir, 0755, true) && !is_dir($outputDir)) {
+    if (! is_dir($outputDir) && ! mkdir($outputDir, 0755, true) && ! is_dir($outputDir)) {
         throw new RuntimeException("Unable to create output directory {$outputDir}");
     }
 
@@ -477,8 +476,7 @@ function main(array $argv): int
 try {
     exit(main($argv));
 } catch (Throwable $exception) {
-    fwrite(STDERR, 'Error: ' . $exception->getMessage() . "\n");
+    fwrite(STDERR, 'Error: '.$exception->getMessage()."\n");
 
     exit(1);
 }
-

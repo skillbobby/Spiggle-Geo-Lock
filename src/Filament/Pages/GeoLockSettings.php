@@ -6,10 +6,12 @@ namespace GeoLock\Filament\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -19,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use GeoLock\Contracts\GeoLockRuleRepository;
 use GeoLock\Contracts\RoleDirectory;
+use GeoLock\Data\GeoLockDecision;
 use GeoLock\Enums\RuleType;
 use GeoLock\Filament\Resources\GeoLockRules\Schemas\GeoLockRuleForm;
 use GeoLock\Filament\Widgets\RecentGeoLockAttempts;
@@ -30,6 +33,8 @@ use GeoLock\Support\Authorizer;
  * The centralized rules editor, shaped after the reference design: a
  * collapsible repeater of rules, a live summary of the current visitor and a
  * log of recent decisions.
+ *
+ * @property-read Schema $form
  */
 class GeoLockSettings extends Page
 {
@@ -76,7 +81,7 @@ class GeoLockSettings extends Page
         return filled($group) ? (string) $group : null;
     }
 
-    public static function getNavigationIcon(): string | BackedEnum | null
+    public static function getNavigationIcon(): string|BackedEnum|null
     {
         return config('geo-lock.ui.navigation_icon', 'heroicon-o-globe-alt');
     }
@@ -92,7 +97,7 @@ class GeoLockSettings extends Page
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\Repeater::make('rules')
+                Repeater::make('rules')
                     ->hiddenLabel()
                     ->addActionLabel(__('geo-lock::geo-lock.settings.add_rule'))
                     ->collapsible()
@@ -109,9 +114,12 @@ class GeoLockSettings extends Page
 
     public function content(Schema $schema): Schema
     {
+        /** @var view-string $locationCardView */
+        $locationCardView = 'geo-lock::components.location-card';
+
         return $schema
             ->components([
-                View::make('geo-lock::components.location-card')
+                View::make($locationCardView)
                     ->viewData(fn (): array => [
                         'decision' => $this->currentDecision(),
                         'rules' => $this->manager()->rules()->count(),
@@ -288,7 +296,7 @@ class GeoLockSettings extends Page
         return $type?->getLabel();
     }
 
-    protected function currentDecision(): \GeoLock\Data\GeoLockDecision
+    protected function currentDecision(): GeoLockDecision
     {
         return $this->manager()->evaluate(Authorizer::user());
     }
@@ -307,7 +315,8 @@ class GeoLockSettings extends Page
     {
         return $this->manager()->roleDirectory();
     }
-    public static function getSlug(?\Filament\Panel $panel = null): string
+
+    public static function getSlug(?Panel $panel = null): string
     {
         return (string) config('geo-lock.ui.settings_page.slug', 'geo-lock');
     }

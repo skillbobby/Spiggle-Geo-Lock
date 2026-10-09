@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use GeoLock\Enums\ResolverFailureBehavior;
 use GeoLock\Enums\UnresolvableIpBehavior;
+use GeoLock\Models\GeoLockRule;
+use GeoLock\Resolvers\ArrayGeoResolver;
+use GeoLock\Resolvers\NullGeoResolver;
+use GeoLock\Resolvers\TorannGeoResolver;
 
 return [
 
@@ -65,9 +69,9 @@ return [
         'driver' => env('GEO_LOCK_RESOLVER', 'torann'),
 
         'drivers' => [
-            'torann' => GeoLock\Resolvers\TorannGeoResolver::class,
-            'null' => GeoLock\Resolvers\NullGeoResolver::class,
-            'array' => GeoLock\Resolvers\ArrayGeoResolver::class,
+            'torann' => TorannGeoResolver::class,
+            'null' => NullGeoResolver::class,
+            'array' => ArrayGeoResolver::class,
         ],
 
         'fallbacks' => [],
@@ -91,7 +95,7 @@ return [
     */
 
     'rules' => [
-        'model' => GeoLock\Models\GeoLockRule::class,
+        'model' => GeoLockRule::class,
         'table' => 'geo_lock_rules',
 
         'cache' => [

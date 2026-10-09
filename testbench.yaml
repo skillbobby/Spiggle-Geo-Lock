@@ -1,6 +1,7 @@
 laravel: '@testbench'
 
 providers:
+  - GeoLock\GeoLockServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
   - Workbench\App\Providers\AdminPanelProvider
 

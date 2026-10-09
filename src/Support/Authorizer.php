@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace GeoLock\Support;
 
 use Closure;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
 use Throwable;
 

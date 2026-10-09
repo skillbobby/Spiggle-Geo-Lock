@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use GeoLock\Contracts\RoleDirectory;
 use GeoLock\Enums\RuleType;
 use GeoLock\Models\GeoLockRule;
 use GeoLock\Support\Authorizer;
@@ -101,7 +102,7 @@ final class GeoLockRulesTable
                 SelectFilter::make('roles')
                     ->label(__('geo-lock::geo-lock.table.roles'))
                     ->multiple()
-                    ->options(fn (): array => app(\GeoLock\Contracts\RoleDirectory::class)->availableRoles())
+                    ->options(fn (): array => app(RoleDirectory::class)->availableRoles())
                     ->query(fn ($query, array $state) => $query->when(
                         filled($state['values'] ?? null),
                         fn ($query) => $query->forRoles($state['values']),
