@@ -361,6 +361,10 @@ composer analyse     # phpstan (larastan, level 5)
 vendor/bin/testbench serve
 ```
 
+The GitHub Actions workflow lives in [`docs/ci/run-tests.yml`](docs/ci/run-tests.yml);
+copy it to `.github/workflows/run-tests.yml` to enable CI (it runs the suite against
+Filament 4 and 5 on PHP 8.3 and 8.4, plus Pint and PHPStan).
+
 ## Contributing
 
 Pull requests are welcome. Please run `composer check` (lint + analyse + test) before opening
