@@ -54,11 +54,11 @@
         }
     },
     "scripts": {
-        "test": "pest",
-        "test:coverage": "pest --coverage",
-        "lint": "pint",
-        "lint:check": "pint --test",
-        "analyse": "phpstan analyse",
+        "test": "@php vendor/bin/pest",
+        "test:coverage": "@php vendor/bin/pest --coverage",
+        "lint": "@php vendor/bin/pint",
+        "lint:check": "@php vendor/bin/pint --test",
+        "analyse": "@php vendor/bin/phpstan analyse",
         "check": [
             "@lint:check",
             "@analyse",
