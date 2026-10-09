@@ -1,0 +1,28 @@
+laravel: '@testbench'
+
+providers:
+  - Workbench\App\Providers\WorkbenchServiceProvider
+  - Workbench\App\Providers\AdminPanelProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+env:
+  - APP_ENV=local
+  - GEO_LOCK_RESOLVER=array
+
+workbench:
+  start: '/admin'
+  install: true
+  discovers:
+    web: true
+    commands: true
+    views: true
+    factories: true
+  build:
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh

@@ -193,6 +193,52 @@ final class CountryData
         ];
     }
 
+    /**
+     * Search the country list, matching on the name or the code.
+     *
+     * @return array<string, string>
+     */
+    public static function search(?string $search, int $limit = 50): array
+    {
+        $needle = Str::of((string) $search)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+
+        $results = [];
+
+        foreach (self::records() as $code => $record) {
+            $haystack = Str::of($record['name'] . ' ' . $code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+
+            if ($needle === '' || str_contains($haystack, $needle)) {
+                $results[$code] = self::label($code) ?? $record['name'];
+            }
+
+            if (count($results) >= $limit) {
+                break;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param  array<int, string>  $codes
+     * @return array<string, string>
+     */
+    public static function labelsFor(array $codes): array
+    {
+        $labels = [];
+
+        foreach ($codes as $code) {
+            $labels[$code] = self::label($code) ?? strtoupper((string) $code);
+        }
+
+        return $labels;
+    }
+
+    public static function count(): int
+    {
+        return count(self::records());
+    }
+
     public static function path(): string
     {
         return self::$path ??= Str::finish(dirname(__DIR__, 2), '/') . 'resources/data/countries.json';

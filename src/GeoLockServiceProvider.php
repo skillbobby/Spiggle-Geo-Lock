@@ -62,8 +62,22 @@ class GeoLockServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->registerCommands();
         $this->registerEventListeners();
         $this->registerPanelMiddleware();
+    }
+
+    protected function registerCommands(): void
+    {
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
+
+        $this->commands([
+            Console\Commands\CheckCommand::class,
+            Console\Commands\DoctorCommand::class,
+            Console\Commands\PruneCommand::class,
+        ]);
     }
 
     protected function registerEventListeners(): void

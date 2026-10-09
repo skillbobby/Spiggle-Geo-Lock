@@ -11,6 +11,7 @@ use GeoLock\Support\CountryData;
 use GeoLock\Support\RegionData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -32,6 +33,14 @@ class GeoLockRule extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    /**
+     * @return \GeoLock\Database\Factories\GeoLockRuleFactory
+     */
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    {
+        return \GeoLock\Database\Factories\GeoLockRuleFactory::new();
+    }
 
     /**
      * @return array<string, string>
@@ -98,6 +107,14 @@ class GeoLockRule extends Model
                 $query->orWhereJsonContains('roles', $role);
             }
         });
+    }
+
+    /**
+     * @return HasMany<GeoLockAttempt, self>
+     */
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(GeoLockAttempt::class, 'rule_id');
     }
 
     public function isWhitelist(): bool

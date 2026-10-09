@@ -42,7 +42,8 @@
     },
     "autoload": {
         "psr-4": {
-            "GeoLock\\": "src/"
+            "GeoLock\\": "src/",
+            "GeoLock\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {

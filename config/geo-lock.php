@@ -67,6 +67,7 @@ return [
         'drivers' => [
             'torann' => GeoLock\Resolvers\TorannGeoResolver::class,
             'null' => GeoLock\Resolvers\NullGeoResolver::class,
+            'array' => GeoLock\Resolvers\ArrayGeoResolver::class,
         ],
 
         'fallbacks' => [],
@@ -95,6 +96,11 @@ return [
 
         'cache' => [
             'enabled' => env('GEO_LOCK_CACHE_ENABLED', true),
+            'store' => env('GEO_LOCK_CACHE_STORE'),
+            'ttl' => (int) env('GEO_LOCK_RULES_CACHE_TTL', 300),
+            'key' => 'geo-lock:rules',
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -249,9 +255,3 @@ return [
     ],
 
 ];
-
-            'store' => env('GEO_LOCK_CACHE_STORE'),
-            'ttl' => (int) env('GEO_LOCK_RULES_CACHE_TTL', 300),
-            'key' => 'geo-lock:rules',
-        ],
-    ],

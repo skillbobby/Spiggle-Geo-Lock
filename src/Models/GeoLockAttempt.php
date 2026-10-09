@@ -40,6 +40,14 @@ class GeoLockAttempt extends Model
     protected $guarded = [];
 
     /**
+     * @return \GeoLock\Database\Factories\GeoLockAttemptFactory
+     */
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    {
+        return \GeoLock\Database\Factories\GeoLockAttemptFactory::new();
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getCasts(): array

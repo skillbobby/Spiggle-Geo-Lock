@@ -14,6 +14,7 @@ use GeoLock\Events\GeoLockAccessDenied;
 use GeoLock\Events\GeoLockAccessGranted;
 use GeoLock\Events\GeoLockBypassed;
 use GeoLock\Models\GeoLockRule;
+use GeoLock\Resolvers\ArrayGeoResolver;
 use GeoLock\Resolvers\CacheGeoResolver;
 use GeoLock\Support\IpAddress;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -65,6 +66,23 @@ class GeoLockManager
         $this->locations = [];
 
         return $this;
+    }
+
+    /**
+     * Swap the resolver for an in-memory one - perfect for tests, demos and
+     * the `geo-lock:check` command.
+     *
+     *     GeoLock::fake(['8.8.8.8' => ['country_code' => 'US', 'region_code' => 'US-FL']]);
+     *
+     * @param  array<string, array<string, mixed>|GeoLocation|string>  $locations
+     */
+    public function fake(array $locations = []): ArrayGeoResolver
+    {
+        $resolver = new ArrayGeoResolver($locations);
+
+        $this->useResolver($resolver);
+
+        return $resolver;
     }
 
     public function resetResolver(): static

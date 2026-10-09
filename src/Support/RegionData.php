@@ -252,6 +252,48 @@ final class RegionData
         return null;
     }
 
+    /**
+     * Search the subdivisions of the given countries.
+     *
+     * @param  array<int, string>|string|null  $countries
+     * @return array<string, string>
+     */
+    public static function search(array|string|null $countries, ?string $search, int $limit = 50): array
+    {
+        $needle = Str::of((string) $search)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+
+        $results = [];
+
+        foreach (self::forCountries($countries) as $code => $name) {
+            $haystack = Str::of($name . ' ' . $code)->lower()->ascii()->replaceMatches('/[^a-z0-9]+/', '')->value();
+
+            if ($needle === '' || str_contains($haystack, $needle)) {
+                $results[$code] = self::label($code) ?? $name;
+            }
+
+            if (count($results) >= $limit) {
+                break;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param  array<int, string>  $codes
+     * @return array<string, string>
+     */
+    public static function labelsFor(array $codes): array
+    {
+        $labels = [];
+
+        foreach ($codes as $code) {
+            $labels[$code] = self::label($code) ?? strtoupper((string) $code);
+        }
+
+        return $labels;
+    }
+
     public static function count(): int
     {
         return array_sum(array_map(count(...), self::all()));
