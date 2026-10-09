@@ -340,8 +340,14 @@ The production checklist lives in [docs/security.md](docs/security.md).
 ## Compatibility
 
 Filament 4 and Filament 5 share the same public API for everything this plugin uses, so a
-single code base supports both (and Laravel 11, 12 and 13). The test suite runs against
-Filament 4 and 5 on PHP 8.3 and 8.4.
+single code base supports both (and Laravel 11, 12 and 13). The test suite is verified on:
+
+| Filament | Livewire | Laravel | PHP | Result |
+| --- | --- | --- | --- | --- |
+| 4.15.1 | 3.8.10 | 13.35.0 | 8.4.23 | 108 tests passing |
+| 5.10.1 | 4.x | 13.35.0 | 8.4.23 | 107 tests passing |
+
+CI runs the same suite against Filament 4 and 5 on PHP 8.3 and 8.4.
 
 ## Development
 

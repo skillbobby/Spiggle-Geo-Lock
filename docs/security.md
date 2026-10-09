@@ -191,6 +191,9 @@ The resolvers cooperate:
   and caching a private IP is pointless).
 - `IpAddress::anonymize()` can mask the last octet (IPv4) or group (IPv6) of an
   address for logging.
+- Set `audit.anonymize_ips` to `true` to store masked addresses in the audit table
+  (the last octet/group is replaced by `0`), which keeps the trail useful for
+  country/region analysis without keeping a full address.
 
 If you must evaluate private addresses (for example in an internal network where
 the proxy forwards a public address), set `access.bypass_private_ips` to `false`

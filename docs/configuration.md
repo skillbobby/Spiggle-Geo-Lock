@@ -145,6 +145,7 @@ Response resolution order in `EnforceGeoLock::deny()`:
 | `audit.record_grants` | bool | `false` | Also persist `GeoLockAccessGranted` decisions. |
 | `audit.record_bypasses` | bool | `false` | Also persist `GeoLockBypassed` decisions. |
 | `audit.keep_days` | int | `90` | Default retention used by `geo-lock:prune` when `--days` is omitted. |
+| `audit.anonymize_ips` | bool | `false` | Stores masked IP addresses (last octet/group removed) using `IpAddress::anonymize()`. |
 
 Denials are always recorded when auditing is enabled. Prune with
 `php artisan geo-lock:prune`.
