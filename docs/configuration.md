@@ -102,7 +102,6 @@ for the two-state enums (`UnresolvableIpBehavior`: `true` = `deny`;
 See [Security](security.md) for the failure modes and [Rules](rules.md) for how
 roles drive applicability.
 
-
 ## bypass
 
 The emergency bypass is evaluated before the rules. Any match grants access and
@@ -183,4 +182,3 @@ The resolved directory is bound as `GeoLock\Contracts\RoleDirectory`. See
 See [Extending](extending.md#the-authorizer) for the authorization resolution
 rules and [Troubleshooting](troubleshooting.md#the-settings-page-returns-403) for
 the common 403 case.
-

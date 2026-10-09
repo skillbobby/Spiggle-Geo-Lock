@@ -8,6 +8,7 @@ use GeoLock\Data\GeoLockDecision;
 use GeoLock\Database\Factories\GeoLockAttemptFactory;
 use GeoLock\Enums\GeoLockOutcome;
 use GeoLock\Support\CountryData;
+use GeoLock\Support\IpAddress;
 use GeoLock\Support\RegionData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -138,8 +139,14 @@ class GeoLockAttempt extends Model
         $user = $decision->user;
         $request = request();
 
+        $ip = $location->ip;
+
+        if ((bool) config('geo-lock.audit.anonymize_ips', false)) {
+            $ip = IpAddress::anonymize($ip);
+        }
+
         return new self([
-            'ip' => $location->ip,
+            'ip' => $ip,
             'country_code' => $location->countryCode,
             'region_code' => $location->regionCode,
             'city' => $location->city,

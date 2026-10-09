@@ -32,12 +32,11 @@
         "larastan/larastan": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/pint": "^1.18",
-        "livewire/livewire": "^4.0",
+        "livewire/livewire": "^3.8|^4.0",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^5.0",
         "pestphp/pest-plugin-arch": "^5.0",
         "pestphp/pest-plugin-laravel": "^5.0",
-        "pestphp/pest-plugin-livewire": "^5.0",
         "spatie/laravel-permission": "^8.0"
     },
     "autoload": {

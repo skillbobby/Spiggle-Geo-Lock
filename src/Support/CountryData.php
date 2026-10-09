@@ -130,11 +130,15 @@ final class CountryData
 
         $code = strtoupper((string) $code);
 
-        return mb_convert_encoding(
-            pack('C*', ...array_map(static fn (string $letter): int => ord($letter) + 127397, str_split($code))),
-            'UTF-8',
-            'UTF-32BE',
-        );
+        $utf32 = '';
+
+        foreach (str_split($code) as $letter) {
+            // Regional indicator symbols are 32 bit code points, so they are
+            // packed as big endian 32 bit integers (pack('C*') would truncate).
+            $utf32 .= pack('N', ord($letter) + 127397);
+        }
+
+        return mb_convert_encoding($utf32, 'UTF-8', 'UTF-32BE');
     }
 
     /**

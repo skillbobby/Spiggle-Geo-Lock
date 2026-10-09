@@ -240,7 +240,6 @@ The shipped `DatabaseGeoLockRuleRepository` also normalises input: it casts
 string role/country lists, uppercases codes, and derives countries from region
 codes. Reuse or reproduce that behaviour in a custom repository.
 
-
 ## Custom role directories
 
 Roles are discovered through `GeoLock\Contracts\RoleDirectory`. The shipped
@@ -338,3 +337,122 @@ $location->countryCode();   // e.g. "US"
 $location->label();         // e.g. "Miami, Florida, United States"
 ```
 
+## Customising the denial response
+
+`EnforceGeoLock::deny()` builds the response in a fixed order.
+
+### JSON requests
+
+Any request with `Accept: application/json` always receives JSON, regardless of
+the `denial` configuration:
+
+```json
+{
+    "message": "Access to this panel is not allowed from Jamaica (JM).",
+    "outcome": "denied_blacklist",
+    "allowed": false,
+    "reason": "blacklisted",
+    "message": "...",
+    "rule_id": 4,
+    "rule_name": "Block Jamaica",
+    "roles": ["editor"],
+    "user_id": 12,
+    "evaluated_rules": 2,
+    "resolver_failed": false,
+    "location": {
+        "ip": "203.0.113.7",
+        "country_code": "JM",
+        "country_name": "Jamaica",
+        "region_code": "JM-01",
+        "region_name": "Kingston",
+        "city": "Kingston",
+        "postal_code": null,
+        "latitude": 17.997,
+        "longitude": -76.793,
+        "resolver": "torann",
+        "is_private": false,
+        "is_resolved": true
+    }
+}
+```
+
+The status code comes from `denial.status` (default 403).
+
+### HTML requests
+
+1. `denial.redirect` - a URL or a route name. Route names are detected with
+   `Route::has()` and resolved with `route()`.
+2. `denial.view` - any Blade view, rendered with a `$decision` variable:
+
+```php
+// config/geo-lock.php
+'denial' => [
+    'status' => 403,
+    'message' => null,
+    'view' => 'errors.geo-locked',
+    'redirect' => null,
+],
+```
+
+```blade
+{{-- resources/views/errors/geo-locked.blade.php --}}
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Access denied</title></head>
+<body>
+    <h1>{{ $decision->message() }}</h1>
+    <p>Outcome: {{ $decision->outcome->value }}</p>
+    <p>Your location: {{ $decision->location->label() }}</p>
+</body>
+</html>
+```
+
+3. Otherwise `abort($status, $decision->message())`.
+
+### Messages
+
+`denial.message`, when set, overrides the message for **every** outcome. When it
+is `null`, `GeoLockDecision::message()` selects a translated string per outcome
+(`denial.blacklist`, `denial.whitelist`, `denial.unresolvable`,
+`denial.resolver_failure`, `denial.untrusted_proxy`, `denial.generic`). Publish
+the translations with `--tag=geo-lock-translations` to override the wording.
+
+## The Authorizer
+
+`GeoLock\Support\Authorizer` decides whether the current user may manage rules.
+It is consulted by `GeoLockSettings::canAccess()`, every `can*()` method on
+`GeoLockRuleResource`, the toggle action and the three widgets. The rule comes
+from `geo-lock.ui.authorization.manage`:
+
+| Value | Behaviour |
+| --- | --- |
+| `null` or `''` | Everybody may manage rules (including guests). |
+| `true` / `false` | Literal answer. |
+| `string` | A Gate ability checked with `Gate::forUser($user)->allows($ability)`. |
+| `Closure` | Called with the user; the return value is cast to `bool`. |
+
+```php
+// config/geo-lock.php
+'ui' => [
+    'authorization' => [
+        'manage' => 'manage-geo-lock',   // Gate ability
+    ],
+],
+```
+
+```php
+// or from the panel provider:
+GeoLockPlugin::make()
+    ->authorizeUsing(fn ($user): bool => $user?->hasRole('super_admin') ?? false);
+```
+
+`Authorizer::user()` prefers the current Filament panel's authenticated user and
+falls back to the default guard, so the checks work both inside and outside the
+panel. Any value the authorizer does not understand resolves to `false`
+(deny).
+
+`ui.authorization.bypass` is read by `Authorizer::canBypass()` using the same
+resolution rules; no built-in UI calls it yet, so it is available for
+application code that wants to expose its own bypass-management surface.
+
+Next: [Testing](testing.md).

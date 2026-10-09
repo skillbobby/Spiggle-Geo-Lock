@@ -199,6 +199,9 @@ return [
         'record_grants' => false,
         'record_bypasses' => false,
         'keep_days' => 90,
+
+        // Mask the last octet of the stored IP addresses (privacy friendly).
+        'anonymize_ips' => false,
     ],
 
     /*

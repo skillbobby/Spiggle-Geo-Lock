@@ -6,6 +6,7 @@ namespace GeoLock\Services;
 
 use Closure;
 use GeoLock\Contracts\RoleDirectory;
+use GeoLock\Support\Authorizer;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
@@ -84,6 +85,12 @@ class BypassInspector
             if (is_string($result) && $result !== '') {
                 return $result;
             }
+        }
+
+        // A dynamic bypass can also be granted through the UI authorization
+        // configuration (`geo-lock.ui.authorization.bypass`).
+        if (config('geo-lock.ui.authorization.bypass') !== null && Authorizer::canBypass($user)) {
+            return 'authorization';
         }
 
         $ability = config('geo-lock.bypass.ability');

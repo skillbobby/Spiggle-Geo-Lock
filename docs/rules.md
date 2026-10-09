@@ -140,7 +140,6 @@ GeoLockRule::factory()
   `NoRules` (allowed). Add a global whitelist if non-editors must also be
   restricted.
 
-
 ### Per-role whitelist plus a global blacklist
 
 ```php
@@ -228,4 +227,3 @@ picked subdivisions. This is also what lets the panel's rules table show the
 country column for region-only rules.
 
 Next: [Security](security.md).
-

@@ -242,7 +242,6 @@ non-positive `--days`. Schedule it in `routes/console.php` or the console kernel
 Schedule::command('geo-lock:prune')->daily();
 ```
 
-
 ## Production checklist
 
 - [ ] `GEO_LOCK_RESOLVER=torann` with a **local MaxMind database**
@@ -263,4 +262,3 @@ Schedule::command('geo-lock:prune')->daily();
       action before enabling strict rules.
 
 Next: [Extending](extending.md).
-

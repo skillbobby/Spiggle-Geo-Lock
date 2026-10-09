@@ -103,9 +103,10 @@ class GeoLockRule extends Model
     public function scopeForRoles(Builder $query, array $roles): Builder
     {
         return $query->where(function (Builder $query) use ($roles): void {
-            $query->whereNull('roles');
+            // Rules without roles apply to everybody.
+            $query->whereNull('roles')->orWhereJsonLength('roles', 0);
 
-            foreach ($roles as $index => $role) {
+            foreach ($roles as $role) {
                 $query->orWhereJsonContains('roles', $role);
             }
         });

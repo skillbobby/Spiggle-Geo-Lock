@@ -14,6 +14,6 @@ class WorkbenchServiceProvider extends ServiceProvider
     {
         // The package migrations are publishable, so the demo app loads them
         // straight from the package.
-        $this->loadMigrationsFrom(__DIR__ . '/../../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../../../database/migrations');
     }
 }

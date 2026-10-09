@@ -61,7 +61,7 @@ php artisan vendor:publish --tag=geo-lock-migrations
 | Tag | Publishes | Destination |
 | --- | --- | --- |
 | `geo-lock-config` | `config/geo-lock.php` | `config/geo-lock.php` |
-| `geo-lock-views` | The denial and settings views | `resources/views/vendor/geo-lock` |
+| `geo-lock-views` | The settings page and location-card views | `resources/views/vendor/geo-lock` |
 | `geo-lock-translations` | `resources/lang/en/geo-lock.php` | `lang/vendor/geo-lock` |
 | `geo-lock-migrations` | `create_geo_lock_rules_table`, `create_geo_lock_attempts_table` | `database/migrations` |
 
@@ -191,7 +191,6 @@ marked persistent so it also runs on subsequent Livewire requests. This stops a
 user from opening the panel from an allowed location and then continuing to
 navigate after moving (or spoofing) elsewhere.
 
-
 ## Configure torann/geoip
 
 The default resolver is `torann`. The middleware asks it for the location of the
@@ -301,4 +300,3 @@ Because `GEO_LOCK_RESOLVER=array` is set, the workbench resolves locations from
 page, or seed fake locations, to see decisions without network access.
 
 Next: [Configuration](configuration.md).
-

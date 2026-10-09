@@ -13,6 +13,7 @@ use GeoLock\Models\GeoLockAttempt;
 use GeoLock\Support\Authorizer;
 use GeoLock\Support\CountryData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class RecentGeoLockAttempts extends TableWidget
@@ -25,7 +26,17 @@ class RecentGeoLockAttempts extends TableWidget
 
     public static function canView(): bool
     {
-        return Authorizer::canManage(Authorizer::user());
+        if (! Authorizer::canManage(Authorizer::user())) {
+            return false;
+        }
+
+        // The audit table is optional: hide the widget when it is missing
+        // rather than breaking the page.
+        try {
+            return Schema::hasTable((string) config('geo-lock.audit.table', 'geo_lock_attempts'));
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     public function getHeading(): ?string

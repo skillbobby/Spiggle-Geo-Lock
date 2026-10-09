@@ -318,6 +318,8 @@ class GeoLockSettings extends Page
 
     public static function getSlug(?Panel $panel = null): string
     {
-        return (string) config('geo-lock.ui.settings_page.slug', 'geo-lock');
+        $slug = config('geo-lock.ui.settings_page.slug');
+
+        return filled($slug) ? (string) $slug : 'geo-lock';
     }
 }

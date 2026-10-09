@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeoLock\Filament\Resources\GeoLockRules\Schemas;
 
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -39,6 +40,8 @@ final class GeoLockRuleForm
     public static function ruleFields(): array
     {
         return [
+            Hidden::make('id'),
+
             TextInput::make('name')
                 ->label(__('geo-lock::geo-lock.form.name'))
                 ->placeholder(__('geo-lock::geo-lock.form.name_placeholder'))

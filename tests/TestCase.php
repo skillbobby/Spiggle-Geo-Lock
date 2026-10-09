@@ -4,13 +4,30 @@ declare(strict_types=1);
 
 namespace GeoLock\Tests;
 
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
 use Filament\Facades\Filament;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Infolists\InfolistsServiceProvider;
+use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
 use GeoLock\GeoLockServiceProvider;
 use GeoLock\Support\MiddlewareRegistry;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Application;
+use Kirschbaum\PowerJoins\PowerJoinsServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
+use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionServiceProvider;
+use Torann\GeoIP\GeoIPServiceProvider;
 use Workbench\App\Models\User;
 use Workbench\App\Providers\AdminPanelProvider;
 use Workbench\App\Providers\WorkbenchServiceProvider;
@@ -30,7 +47,7 @@ abstract class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            static fn (string $modelName): string => 'GeoLock\\Database\\Factories\\' . class_basename($modelName) . 'Factory',
+            static fn (string $modelName): string => 'GeoLock\\Database\\Factories\\'.class_basename($modelName).'Factory',
         );
 
         // `MiddlewareRegistry` memoizes the panels it guarded in a static
@@ -45,28 +62,28 @@ abstract class TestCase extends Orchestra
      * Testbench disables package discovery, so the providers of the packages
      * the plugin integrates with are registered explicitly.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return array<int, class-string>
      */
     protected function getPackageProviders($app): array
     {
         return [
-            \BladeUI\Heroicons\BladeHeroiconsServiceProvider::class,
-            \BladeUI\Icons\BladeIconsServiceProvider::class,
-            \Kirschbaum\PowerJoins\PowerJoinsServiceProvider::class,
-            \RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider::class,
-            \Livewire\LivewireServiceProvider::class,
-            \Filament\Support\SupportServiceProvider::class,
-            \Filament\Actions\ActionsServiceProvider::class,
-            \Filament\Forms\FormsServiceProvider::class,
-            \Filament\Infolists\InfolistsServiceProvider::class,
-            \Filament\Notifications\NotificationsServiceProvider::class,
-            \Filament\Schemas\SchemasServiceProvider::class,
-            \Filament\Tables\TablesServiceProvider::class,
-            \Filament\Widgets\WidgetsServiceProvider::class,
-            \Filament\FilamentServiceProvider::class,
-            \Spatie\Permission\PermissionServiceProvider::class,
-            \Torann\GeoIP\GeoIPServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            PowerJoinsServiceProvider::class,
+            BladeCaptureDirectiveServiceProvider::class,
+            LivewireServiceProvider::class,
+            SupportServiceProvider::class,
+            ActionsServiceProvider::class,
+            FormsServiceProvider::class,
+            InfolistsServiceProvider::class,
+            NotificationsServiceProvider::class,
+            SchemasServiceProvider::class,
+            TablesServiceProvider::class,
+            WidgetsServiceProvider::class,
+            FilamentServiceProvider::class,
+            PermissionServiceProvider::class,
+            GeoIPServiceProvider::class,
             GeoLockServiceProvider::class,
             WorkbenchServiceProvider::class,
             AdminPanelProvider::class,
@@ -79,16 +96,16 @@ abstract class TestCase extends Orchestra
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadMigrationsFrom(__DIR__ . '/../workbench/database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../workbench/database/migrations');
     }
 
     /**
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      */
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
         $app['config']->set('database.default', 'testing');
         $app['config']->set('cache.default', 'array');
         $app['config']->set('session.driver', 'array');

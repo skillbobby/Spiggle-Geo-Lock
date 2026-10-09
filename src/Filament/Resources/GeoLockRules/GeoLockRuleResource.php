@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GeoLock\Filament\Resources\GeoLockRules;
 
+use Filament\Panel;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -47,9 +48,18 @@ class GeoLockRuleResource extends Resource
         ];
     }
 
+    public static function getSlug(?Panel $panel = null): string
+    {
+        $slug = config('geo-lock.ui.rule_resource.slug');
+
+        return filled($slug) ? (string) $slug : parent::getSlug($panel);
+    }
+
     public static function getNavigationLabel(): string
     {
-        return (string) config('geo-lock.ui.rule_resource.label', __('geo-lock::geo-lock.navigation.rules'));
+        $label = config('geo-lock.ui.rule_resource.label');
+
+        return filled($label) ? (string) $label : __('geo-lock::geo-lock.navigation.rules');
     }
 
     public static function getNavigationGroup(): ?string

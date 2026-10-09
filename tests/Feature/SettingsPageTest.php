@@ -48,3 +48,46 @@ it('saves rules from the repeater', function (): void {
         ->and($rule->roles)->toBe(['editor'])
         ->and($rule->priority)->toBe(5);
 });
+
+it('runs the myLocation header action and sends a notification', function (): void {
+    $user = $this->createUser([], ['super_admin']);
+
+    $this->actingAs($user);
+
+    fakeGeo(['127.0.0.1' => ['country_code' => 'US', 'region_code' => 'US-FL']]);
+
+    Livewire::test(GeoLockSettings::class)
+        ->callAction('myLocation')
+        ->assertNotified();
+});
+
+it('runs the simulate header action and sends a notification', function (): void {
+    $user = $this->createUser([], ['super_admin']);
+
+    $this->actingAs($user);
+
+    fakeGeo(['8.8.8.8' => ['country_code' => 'JM']]);
+
+    Livewire::test(GeoLockSettings::class)
+        ->callAction('simulate', ['ip' => '8.8.8.8'])
+        ->assertNotified();
+});
+
+it('renders the header and footer widgets without errors', function (): void {
+    $user = $this->createUser([], ['super_admin']);
+
+    $this->actingAs($user);
+
+    $component = Livewire::test(GeoLockSettings::class)->assertOk();
+
+    $page = $component->instance();
+
+    $header = new ReflectionMethod($page, 'getHeaderWidgets');
+    $header->setAccessible(true);
+
+    $footer = new ReflectionMethod($page, 'getFooterWidgets');
+    $footer->setAccessible(true);
+
+    expect($header->invoke($page))->toBeArray()
+        ->and($footer->invoke($page))->toBeArray();
+});
