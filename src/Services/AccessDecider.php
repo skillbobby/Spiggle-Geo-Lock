@@ -12,10 +12,11 @@ class AccessDecider
 {
     /**
      * Active rules that name one of the user's roles are the only rules that apply.
+     * A role, country, or region of "*" means all of that kind, including a visit whose country or region is unknown.
      * A bypass role is always allowed, so an administrator can still open the panel.
      * A block rule denies a visit that matches its country, and its region when one is listed.
      * When the user has an allow rule, the visit must match at least one of those rules.
-     * An unknown country or region does not match. That fails an allow rule and does not trip a block rule.
+     * An unknown country or region does not match a named place. That fails an allow rule and does not trip a block rule.
      */
     public function decide(Authenticatable $user, Location $location): Decision
     {
@@ -72,35 +73,36 @@ class AccessDecider
      */
     private function rulesFor(array $roles): Collection
     {
-        if ($roles === []) {
-            return new Collection;
-        }
-
         return GeoLockRule::query()
             ->where('is_active', true)
             ->orderBy('sort')
             ->get()
             ->filter(function (GeoLockRule $rule) use ($roles): bool {
-                $named = array_map('strval', (array) $rule->roles);
+                $named = array_map(
+                    fn (mixed $role): string => trim((string) $role),
+                    (array) $rule->roles,
+                );
 
-                return array_intersect($roles, $named) !== [];
+                if (in_array('*', $named, true)) {
+                    return true;
+                }
+
+                return $roles !== [] && array_intersect($roles, $named) !== [];
             })
             ->values();
     }
 
     private function matches(GeoLockRule $rule, Location $location): bool
     {
-        if ($location->country === null) {
-            return false;
-        }
-
         $countries = array_map(
             fn (mixed $country): string => strtoupper(trim((string) $country)),
             (array) $rule->countries,
         );
 
-        if (! in_array(strtoupper($location->country), $countries, true)) {
-            return false;
+        if (! in_array('*', $countries, true)) {
+            if ($location->country === null || ! in_array(strtoupper($location->country), $countries, true)) {
+                return false;
+            }
         }
 
         $regions = array_values(array_filter(array_map(
@@ -108,7 +110,7 @@ class AccessDecider
             (array) $rule->regions,
         )));
 
-        if ($regions === []) {
+        if ($regions === [] || in_array('*', $regions, true)) {
             return true;
         }
 

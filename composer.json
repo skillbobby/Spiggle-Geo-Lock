@@ -2,7 +2,7 @@
     "name": "spiggle/geo-lock",
     "description": "Decide which Filament roles can open the panel from which countries and regions.",
     "type": "library",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "proprietary",
     "keywords": [
         "laravel",
@@ -20,13 +20,14 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^3.3|^4.0|^5.0",
+        "filament/filament": "^4.0|^5.0",
         "illuminate/support": ">=11.0",
         "illuminate/database": ">=11.0",
-        "illuminate/http": ">=11.0"
+        "illuminate/http": ">=11.0",
+        "spatie/laravel-permission": "^6.0"
     },
     "suggest": {
-        "spatie/laravel-permission": "Pick roles from the same list the rest of the panel uses."
+        "spatie/laravel-activitylog": "Also write each denial into the application activity log."
     },
     "autoload": {
         "psr-4": {

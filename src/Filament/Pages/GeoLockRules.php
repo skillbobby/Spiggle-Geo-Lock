@@ -9,7 +9,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -19,6 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Spiggle\GeoLock\Filament\Concerns\ShowsPageToManagers;
 use Spiggle\GeoLock\Models\GeoLockRule;
 use Spiggle\GeoLock\Services\RequestGeoLocator;
 use Spiggle\GeoLock\Support\Countries;
@@ -29,6 +29,8 @@ use UnitEnum;
  */
 class GeoLockRules extends Page
 {
+    use ShowsPageToManagers;
+
     /**
      * @var array<string, mixed>|null
      */
@@ -86,27 +88,54 @@ class GeoLockRules extends Page
                             ->native(false),
                         Select::make('countries')
                             ->label('Countries')
-                            ->options(Countries::options())
+                            ->options(['*' => 'All countries (*)'] + Countries::options())
                             ->multiple()
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->helperText('Use * for every country.'),
                         TagsInput::make('regions')
                             ->label('Specific Regions / States')
                             ->placeholder('Kingston')
-                            ->helperText('Leave empty to match the whole country.'),
+                            ->helperText('Leave empty to match the whole country. Use * for every region.'),
                         Toggle::make('is_active')
                             ->label('Rule Active')
                             ->default(true)
                             ->columnSpanFull(),
                     ])
                     ->columns(2)
-                    ->addActionLabel('Add New Rule')
-                    ->itemLabel(function (array $state): ?string {
-                        $type = ($state['type'] ?? '') === 'block' ? 'Block' : 'Allow';
-                        $roles = collect($state['roles'] ?? [])->filter()->implode(', ');
+                    ->collapsed(function (?Schema $item): bool {
+                        $state = $item?->getRawState();
 
-                        return $roles !== '' ? $type.' · '.$roles : 'New rule';
+                        if (! is_array($state)) {
+                            return true;
+                        }
+
+                        $roles = array_values(array_filter((array) ($state['roles'] ?? [])));
+
+                        return $roles !== [] && in_array($state['type'] ?? null, ['allow', 'block'], true);
                     })
+                    ->addAction(function (Action $action): Action {
+                        return $action->action(function (Repeater $component): void {
+                            $newUuid = $component->generateUuid();
+                            $items = $component->getRawState();
+
+                            if ($newUuid) {
+                                $items[$newUuid] = [];
+                            } else {
+                                $items[] = [];
+                            }
+
+                            $component->rawState($items);
+                            $component->getChildSchema($newUuid ?? array_key_last($items))->fill();
+                            $component->callAfterStateUpdated();
+
+                            if ($component->shouldPartiallyRenderAfterActionsCalled()) {
+                                $component->partiallyRender();
+                            }
+                        });
+                    })
+                    ->addActionLabel('Add New Rule')
+                    ->itemLabel(fn (array $state): string => static::summary($state))
                     ->columnSpanFull(),
             ])
             ->statePath('data');
@@ -159,55 +188,64 @@ class GeoLockRules extends Page
             ->send();
     }
 
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-
-        if ($user === null || ! method_exists($user, 'hasAnyRole')) {
-            return false;
-        }
-
-        $roles = array_map('strval', (array) config('geo-lock.manager_roles', ['super_admin']));
-
-        return $roles !== [] && $user->hasAnyRole($roles);
-    }
-
-    public static function registerNavigationItems(): void
-    {
-        if (! static::shouldRegisterNavigation()) {
-            return;
-        }
-
-        filament()->getCurrentOrDefaultPanel()
-            ?->navigationItems(static::getNavigationItems());
-    }
-
-    /**
-     * @return array<NavigationItem>
-     */
-    public static function getNavigationItems(): array
-    {
-        return array_map(
-            fn (NavigationItem $item): NavigationItem => $item->visible(fn (): bool => static::canAccess()),
-            parent::getNavigationItems(),
-        );
-    }
-
     private function roleField(): Select|TagsInput
     {
         if (! class_exists(Role::class)) {
             return TagsInput::make('roles')
                 ->label('Apply to Roles')
                 ->required()
-                ->placeholder('Editor');
+                ->placeholder('Editor')
+                ->helperText('Use * for every role.');
         }
 
         return Select::make('roles')
             ->label('Apply to Roles')
-            ->options(fn (): array => Role::query()->orderBy('name')->pluck('name', 'name')->all())
+            ->options(fn (): array => ['*' => 'All roles (*)'] + Role::query()->orderBy('name')->pluck('name', 'name')->all())
             ->multiple()
             ->searchable()
             ->required()
-            ->helperText('Which user roles should this rule affect?');
+            ->helperText('Which user roles should this rule affect? Use * for every role.');
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    public static function summary(array $state): string
+    {
+        $roles = array_values(array_filter(array_map(
+            fn (mixed $role): string => trim((string) $role),
+            (array) ($state['roles'] ?? []),
+        )));
+        $type = $state['type'] ?? null;
+
+        if ($roles === [] || ! in_array($type, ['allow', 'block'], true)) {
+            return 'New rule';
+        }
+
+        $status = ($state['is_active'] ?? true) ? 'Active' : 'Inactive';
+        $verb = $type === 'block' ? 'Block' : 'Allow';
+        $who = in_array('*', $roles, true) ? 'all roles' : implode(', ', $roles);
+        $countries = array_values(array_filter(array_map(
+            fn (mixed $country): string => strtoupper(trim((string) $country)),
+            (array) ($state['countries'] ?? []),
+        )));
+        $where = in_array('*', $countries, true)
+            ? 'all countries'
+            : implode(', ', array_map(fn (string $code): string => Countries::name($code), $countries));
+        $regions = array_values(array_filter(array_map(
+            fn (mixed $region): string => trim((string) $region),
+            (array) ($state['regions'] ?? []),
+        )));
+        $regionText = '';
+
+        if (in_array('*', $regions, true)) {
+            $regionText = ' · all regions';
+        } elseif ($regions !== []) {
+            $regionText = ' · '.implode(', ', $regions);
+        }
+
+        $place = $where !== '' ? ' · '.$where : '';
+
+        return "{$status} · {$verb} {$who}{$place}{$regionText}";
     }
 }

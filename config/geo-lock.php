@@ -30,4 +30,9 @@ return [
 
     'local_region' => env('GEO_LOCK_LOCAL_REGION'),
 
+    /*
+    | Days to keep a denial. Zero keeps every row.
+    */
+    'log_days' => (int) env('GEO_LOCK_LOG_DAYS', 90),
+
 ];

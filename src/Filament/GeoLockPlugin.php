@@ -4,6 +4,7 @@ namespace Spiggle\GeoLock\Filament;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Spiggle\GeoLock\Filament\Pages\GeoLockLog;
 use Spiggle\GeoLock\Filament\Pages\GeoLockRules;
 use Spiggle\GeoLock\Http\Middleware\EnforceGeoLock;
 
@@ -32,6 +33,7 @@ class GeoLockPlugin implements Plugin
         $panel
             ->pages([
                 GeoLockRules::class,
+                GeoLockLog::class,
             ])
             ->authMiddleware([
                 EnforceGeoLock::class,
