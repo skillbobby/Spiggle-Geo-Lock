@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Package** | `spiggle/geo-lock` v1.1.0 |
+| **Package** | `spiggle/geo-lock` v1.1.1 |
 
 Decide which roles can open a Filament panel, and from where. A rule can allow a role only from chosen countries and regions, or block a role from them.
 
